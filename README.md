@@ -11,7 +11,7 @@ repository are the plugin itself and must live in `mod/profileupdate`.
 
 ```bash
 cd /path/to/moodle
-git clone https://github.com/<owner>/moodle-mod_profileupdate.git mod/profileupdate
+git clone https://github.com/alivetek/moodle-mod_profileupdate.git mod/profileupdate
 ```
 
 ### From a ZIP archive
