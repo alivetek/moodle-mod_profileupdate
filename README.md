@@ -103,7 +103,7 @@ The plugin defines three capabilities:
 ## Compatibility
 
 - **Moodle:** requires Moodle version `2025100600` (Moodle 5.1) or later.
-- **Plugin release:** `0.1.0` (`MATURITY_ALPHA`).
+- **Plugin release:** `0.2.0` (`MATURITY_BETA`).
 - **Supported activity features:** `FEATURE_MOD_INTRO`,
   `FEATURE_SHOW_DESCRIPTION`, and `FEATURE_BACKUP_MOODLE2`.
 - **License:** GNU GPL v3 or later (see [LICENSE](LICENSE)).
