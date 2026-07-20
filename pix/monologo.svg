@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="24" height="24" viewBox="0 0 24 24"
+     fill="none">
+
+  <!-- Head -->
+  <circle cx="10" cy="8" r="3"
+          stroke="currentColor"
+          stroke-width="1.25"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+
+  <!-- Body -->
+  <path d="M4 19v-1c0-2.76 2.69-5 6-5 1.03 0 2 .22 2.86.61"
+        stroke="currentColor"
+        stroke-width="1.25"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Pencil (original) -->
+  <path fill="currentColor"
+        d="M20.71 11.29a1 1 0 0 0-1.42 0l-6.06 6.06a1 1 0 0 0-.26.46l-.66 2.64a.5.5 0 0 0 .61.61l2.64-.66a1 1 0 0 0 .46-.26l6.06-6.06a1 1 0 0 0 0-1.42l-1.91-1.87zm-6.3 8.06-1.06.27.27-1.06 4.67-4.67.79.79-4.67 4.67zm5.38-5.38-.79-.79.71-.71.79.79-.71.71z"/>
+</svg>
