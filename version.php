@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_profileupdate';
-$plugin->version   = 2026071305;
+$plugin->version   = 2026072401;
 $plugin->requires  = 2025100600;
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.2.0';
+$plugin->release   = '0.2.1';

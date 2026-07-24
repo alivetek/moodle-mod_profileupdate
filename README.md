@@ -5,29 +5,44 @@ Provide a "Profile Update" activity for Moodle allowing users to update user pro
 ## Installation
 
 The plugin installs like any other Moodle activity module. The contents of this
-repository are the plugin itself and must live in `mod/profileupdate`.
+repository are the plugin itself and must live in `public/mod/profileupdate`.
+
+### Using the Moodle plugin installer
+
+1. Download the plugin ZIP.
+2. Log in as an administrator and go to **Site administration ▸ Plugins ▸
+   Install plugins**, then upload the ZIP.
+
+Moodle unpacks the plugin into the correct location for you. Then follow
+[Complete the installation](#complete-the-installation) below.
 
 ### Using Git
 
 ```bash
 cd /path/to/moodle
-git clone https://github.com/alivetek/moodle-mod_profileupdate.git mod/profileupdate
+git clone https://github.com/alivetek/moodle-mod_profileupdate.git public/mod/profileupdate
 ```
 
 ### From a ZIP archive
 
 1. Download the plugin ZIP.
-2. Extract it so that its files end up in `mod/profileupdate` (the folder must be
-   named `profileupdate`).
+2. Extract it so that its files end up in `public/mod/profileupdate` (the folder
+   must be named `profileupdate`).
 
 ### Complete the installation
 
 1. Log in to Moodle as an administrator and go to
-   **Site administration ▸ Notifications**, or run the CLI upgrade:
+   **Site administration ▸ Notifications**, or run the CLI upgrade from the
+   Moodle root (the directory that *contains* `public/`, where `config.php`
+   lives):
 
    ```bash
+   cd /path/to/moodle
    php admin/cli/upgrade.php
    ```
+
+   The CLI scripts remain at `admin/cli/` in the Moodle root; they were not
+   moved into `public/`.
 
 2. Follow the prompts to complete the database upgrade. This registers the
    activity and its capabilities.
