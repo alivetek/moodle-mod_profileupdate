@@ -3,7 +3,7 @@
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other metadata are defined here.
+ * mod_profileupdate data generator.
  *
  * @package     mod_profileupdate
+ * @category    test
  * @copyright   2026 AliveTek Inc.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_profileupdate';
-$plugin->version   = 2026071305;
-$plugin->requires  = 2025100600;
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.2.0';
+/**
+ * Profile update module data generator class.
+ *
+ * The base testing_module_generator::create_instance() already supplies the
+ * defaults (course, name, intro, introformat) that profileupdate_add_instance()
+ * needs, so no overrides are required here.
+ */
+class mod_profileupdate_generator extends testing_module_generator {
+}

@@ -18,7 +18,7 @@
  * Plugin strings are defined here.
  *
  * @package     mod_profileupdate
- * @copyright   2026 Profile Update
+ * @copyright   2026 AliveTek Inc.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,6 +33,7 @@ $string['pluginname'] = 'Profile Update';
 $string['pluginadministration'] = 'Profile Update administration';
 $string['profileupdatename'] = 'Name';
 $string['missingidandcmid'] = 'Missing instance id or course module id';
+$string['privacy:metadata'] = 'The Profile Update plugin does not store any personal data. It only stores which profile fields an activity instance is configured to show, and updates the user\'s own profile through core Moodle APIs.';
 
 // Profile fields selection.
 $string['fieldstoupdate'] = 'Profile fields to update';

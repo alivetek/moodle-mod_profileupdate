@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\CoversFunction;
  * Unit tests for the mod_profileupdate library functions.
  *
  * @package     mod_profileupdate
- * @copyright   2026 Profile Update
+ * @copyright   2026 AliveTek Inc.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[CoversFunction('profileupdate_supports')]

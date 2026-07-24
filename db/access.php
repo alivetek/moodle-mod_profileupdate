@@ -18,7 +18,7 @@
  * Capability definitions for the profileupdate module.
  *
  * @package     mod_profileupdate
- * @copyright   2026 Profile Update
+ * @copyright   2026 AliveTek Inc.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
