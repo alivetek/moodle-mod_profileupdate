@@ -1,0 +1,144 @@
+# Moodle Plugin CI for mod_profileupdate.
+#
+# This file is maintained in the plugin's source-of-truth repository, at
+# `mod/profileupdate/.github/workflows/moodle-ci.yml`, and is published to
+# github.com/alivetek/moodle-mod_profileupdate by the one-way sync that copies
+# the contents of `mod/profileupdate/` to that repository's root.  Edit it
+# there, not on GitHub — the sync runs with `--delete` and overwrites changes
+# made downstream.
+#
+# Based on moodlehq/moodle-plugin-ci's `gha.dist.yml`, trimmed to this plugin.
+# Docs: https://moodlehq.github.io/moodle-plugin-ci/
+
+name: Moodle Plugin CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        # Moodle 5.1 requires PostgreSQL 15 or later.
+        image: postgres:16
+        env:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+      mariadb:
+        # Moodle 5.1 requires MariaDB 10.11.0 or later.
+        image: mariadb:10.11
+        env:
+          MYSQL_USER: 'root'
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
+          MYSQL_COLLATION_SERVER: "utf8mb4_general_ci"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # `$plugin->requires = 2025100600` is Moodle 5.1.0, so 5.1 is the floor
+        # and 5.2 is current stable.  Moodle 5.1 supports PHP 8.2 to 8.4.
+        # A deliberate subset rather than the full cross-product: the ends of
+        # the supported range are covered, and each Moodle branch is exercised
+        # against both databases.
+        include:
+          - php: '8.2'
+            moodle-branch: 'MOODLE_501_STABLE'
+            database: 'pgsql'
+          - php: '8.3'
+            moodle-branch: 'MOODLE_501_STABLE'
+            database: 'mariadb'
+          - php: '8.3'
+            moodle-branch: 'MOODLE_502_STABLE'
+            database: 'pgsql'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_502_STABLE'
+            database: 'pgsql'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_502_STABLE'
+            database: 'mariadb'
+
+    name: PHP ${{ matrix.php }} / ${{ matrix.moodle-branch }} / ${{ matrix.database }}
+
+    steps:
+      - name: Check out plugin
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # Moodle requires max_input_vars >= 5000.
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
+      - name: Install Moodle
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+
+      # Every check runs even after an earlier one fails, so a single push
+      # reports every problem at once rather than one per re-run.
+
+      - name: PHP Lint
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phplint
+
+      - name: Moodle Code Checker
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpcs --max-warnings 0
+
+      - name: Moodle PHPDoc Checker
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpdoc --max-warnings 0
+
+      - name: Validating
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci validate
+
+      - name: Check upgrade savepoints
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci savepoints
+
+      - name: Mustache Lint
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci mustache
+
+      - name: PHPUnit tests
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpunit --fail-on-warning
+
+      # Without this, a cancelled run whose `!cancelled()` steps happened to
+      # pass would report as successful.
+      - name: Mark cancelled jobs as failed
+        if: ${{ cancelled() }}
+        run: exit 1
