@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversFunction;
 #[CoversFunction('profileupdate_add_instance')]
 #[CoversFunction('profileupdate_update_instance')]
 #[CoversFunction('profileupdate_delete_instance')]
+#[CoversFunction('profileupdate_view')]
 #[CoversFunction('profileupdate_get_standard_fields')]
 #[CoversFunction('profileupdate_get_custom_fields')]
 #[CoversFunction('profileupdate_get_available_fields')]
@@ -51,6 +52,7 @@ final class lib_test extends \advanced_testcase {
         parent::setUp();
         global $CFG;
         require_once($CFG->dirroot . '/mod/profileupdate/lib.php');
+        require_once($CFG->libdir . '/completionlib.php');
         $this->resetAfterTest();
         $this->course = $this->getDataGenerator()->create_course();
     }
@@ -79,8 +81,114 @@ final class lib_test extends \advanced_testcase {
         $this->assertTrue(profileupdate_supports(FEATURE_MOD_INTRO));
         $this->assertTrue(profileupdate_supports(FEATURE_SHOW_DESCRIPTION));
         $this->assertTrue(profileupdate_supports(FEATURE_BACKUP_MOODLE2));
+        $this->assertTrue(profileupdate_supports(FEATURE_COMPLETION_TRACKS_VIEWS));
+        $this->assertNull(profileupdate_supports(FEATURE_COMPLETION_HAS_RULES));
         $this->assertNull(profileupdate_supports(FEATURE_GRADE_HAS_GRADE));
         $this->assertNull(profileupdate_supports('some_unknown_feature'));
+    }
+
+    /**
+     * Create a course with completion enabled and a profileupdate instance in it.
+     *
+     * @param int $completion One of the COMPLETION_TRACKING_* constants.
+     * @param int $completionview COMPLETION_VIEW_REQUIRED or COMPLETION_VIEW_NOT_REQUIRED.
+     * @return array [$course, $moduleinstance, $cm, $context]
+     */
+    protected function create_instance_with_completion(
+        int $completion = COMPLETION_TRACKING_AUTOMATIC,
+        int $completionview = COMPLETION_VIEW_REQUIRED
+    ): array {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $moduleinstance = $this->getDataGenerator()->create_module('profileupdate', [
+            'course' => $course->id,
+            'completion' => $completion,
+            'completionview' => $completionview,
+        ]);
+        $cm = get_coursemodule_from_instance('profileupdate', $moduleinstance->id, $course->id, false, MUST_EXIST);
+
+        return [$course, $moduleinstance, $cm, \context_module::instance($cm->id)];
+    }
+
+    /**
+     * Viewing the activity logs the view and completes it when a view is required.
+     */
+    public function test_view_completes_when_view_is_required(): void {
+        [$course, $moduleinstance, $cm, $context] = $this->create_instance_with_completion();
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setUser($student);
+
+        $completion = new \completion_info($course);
+        $this->assertEquals(COMPLETION_NOT_VIEWED, $completion->get_data($cm, false, $student->id)->viewed);
+
+        $sink = $this->redirectEvents();
+        profileupdate_view($moduleinstance, $course, $cm, $context);
+        $events = $sink->get_events();
+        $sink->close();
+
+        $viewed = array_values(array_filter($events, function ($event) {
+            return $event instanceof \mod_profileupdate\event\course_module_viewed;
+        }));
+        $this->assertCount(1, $viewed);
+        $this->assertEquals($context, $viewed[0]->get_context());
+        $this->assertEquals($moduleinstance->id, $viewed[0]->objectid);
+        $this->assertEquals('profileupdate', $viewed[0]->objecttable);
+
+        $data = $completion->get_data($cm, false, $student->id);
+        $this->assertEquals(COMPLETION_VIEWED, $data->viewed);
+        $this->assertEquals(COMPLETION_COMPLETE, $data->completionstate);
+    }
+
+    /**
+     * An instance with a view requirement is selectable as a course completion
+     * condition and reports "View the activity" as its requirement.
+     */
+    public function test_view_requirement_is_reported_for_completion(): void {
+        [$course, , $cm] = $this->create_instance_with_completion();
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $completion = new \completion_info($course);
+
+        // "Condition: Activity completion" in the course completion settings offers
+        // every activity with completion tracking enabled.
+        $this->assertArrayHasKey($cm->id, $completion->get_activities());
+
+        $cminfo = get_fast_modinfo($course, $student->id)->get_cm($cm->id);
+        $details = (new \core_completion\cm_completion_details($completion, $cminfo, $student->id))->get_details();
+
+        $this->assertArrayHasKey('completionview', $details);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $details['completionview']->status);
+    }
+
+    /**
+     * With manual completion, viewing is logged but does not complete the activity.
+     */
+    public function test_view_does_not_complete_manual_tracking(): void {
+        [$course, $moduleinstance, $cm, $context] = $this->create_instance_with_completion(
+            COMPLETION_TRACKING_MANUAL,
+            COMPLETION_VIEW_NOT_REQUIRED
+        );
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setUser($student);
+
+        $sink = $this->redirectEvents();
+        profileupdate_view($moduleinstance, $course, $cm, $context);
+        $events = $sink->get_events();
+        $sink->close();
+
+        $viewed = array_filter($events, function ($event) {
+            return $event instanceof \mod_profileupdate\event\course_module_viewed;
+        });
+        $this->assertCount(1, $viewed);
+
+        $data = (new \completion_info($course))->get_data($cm, false, $student->id);
+        $this->assertEquals(COMPLETION_NOT_VIEWED, $data->viewed);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $data->completionstate);
     }
 
     /**

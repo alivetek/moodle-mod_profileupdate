@@ -38,6 +38,8 @@ function profileupdate_supports($feature) {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
         default:
             return null;
     }
@@ -109,6 +111,38 @@ function profileupdate_delete_instance($id) {
     $DB->delete_records('profileupdate', ['id' => $id]);
 
     return true;
+}
+
+/**
+ * Mark the activity as viewed by the current user.
+ *
+ * Triggers the course module viewed event and, when the instance is configured
+ * with "View the activity" as a completion requirement, records the view so the
+ * activity is marked complete.
+ *
+ * @param stdClass $moduleinstance The profileupdate instance record.
+ * @param stdClass $course The course record.
+ * @param stdClass|cm_info $cm The course module record.
+ * @param context_module $context The module context.
+ * @return void
+ */
+function profileupdate_view($moduleinstance, $course, $cm, $context) {
+    global $CFG;
+
+    // completionlib.php is not loaded on every request, so make sure it is here.
+    require_once($CFG->libdir . '/completionlib.php');
+
+    $event = \mod_profileupdate\event\course_module_viewed::create([
+        'context' => $context,
+        'objectid' => $moduleinstance->id,
+    ]);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('profileupdate', $moduleinstance);
+    $event->trigger();
+
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
 }
 
 /**

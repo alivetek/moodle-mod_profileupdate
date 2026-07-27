@@ -3,7 +3,7 @@
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
@@ -14,18 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace mod_profileupdate\event;
+
 /**
- * Plugin version and other metadata are defined here.
+ * The mod_profileupdate course module viewed event.
  *
  * @package     mod_profileupdate
  * @copyright   2026 AliveTek Inc.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class course_module_viewed extends \core\event\course_module_viewed {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable'] = 'profileupdate';
+    }
 
-$plugin->component = 'mod_profileupdate';
-$plugin->version   = 2026072701;
-$plugin->requires  = 2025100600;
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.2.2';
+    /**
+     * Map the object id for backup and restore.
+     *
+     * @return array
+     */
+    public static function get_objectid_mapping() {
+        return ['db' => 'profileupdate', 'restore' => 'profileupdate'];
+    }
+}

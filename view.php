@@ -88,6 +88,12 @@ if ($selectedfields) {
     }
 }
 
+// Log the view and, where the instance requires it, record it for completion.
+// This has to happen before the header is printed and is deliberately placed
+// after the form handling above so that a save (which redirects) is recorded
+// once, on the page it redirects to.
+profileupdate_view($moduleinstance, $course, $cm, $modulecontext);
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name));
 
