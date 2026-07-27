@@ -27,14 +27,12 @@
  * Define the complete profileupdate structure for backup, with file annotations.
  */
 class backup_profileupdate_activity_structure_step extends backup_activity_structure_step {
-
     /**
      * Define the structure to back up, sourced from the profileupdate and profileupdate_fields tables.
      *
      * @return backup_activity_structure The structure wrapped in the standard activity envelope.
      */
     protected function define_structure() {
-
         $profileupdate = new backup_nested_element('profileupdate', ['id'], [
             'name', 'intro', 'introformat', 'timecreated', 'timemodified',
         ]);

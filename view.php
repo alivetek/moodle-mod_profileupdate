@@ -22,15 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Locate Moodle's config.php. The standard relative path works for regular
-// installations. When the plugin directory is a symlink (as in the Docker-based
-// local development setup), __DIR__ resolves outside the Moodle webroot, so we
-// fall back to the request's document root to find config.php.
-$configpath = __DIR__ . '/../../config.php';
-if (!file_exists($configpath) && !empty($_SERVER['DOCUMENT_ROOT'])) {
-    $configpath = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/config.php';
-}
-require($configpath);
+require('../../config.php');
 require_once(__DIR__ . '/lib.php');
 
 // Course module id.

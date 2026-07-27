@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
  * data, and persists any changes back to the user's profile.
  */
 class mod_profileupdate_edit_form extends moodleform {
-
     /**
      * Custom profile field helper objects, keyed by field shortname.
      *

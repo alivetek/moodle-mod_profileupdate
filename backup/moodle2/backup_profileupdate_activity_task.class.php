@@ -31,7 +31,6 @@ require_once($CFG->dirroot . '/mod/profileupdate/backup/moodle2/backup_profileup
  * Provides the steps to perform one complete backup of the profileupdate instance.
  */
 class backup_profileupdate_activity_task extends backup_activity_task {
-
     /**
      * No specific settings for this activity.
      */

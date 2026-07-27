@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/mod/profileupdate/backup/moodle2/restore_profileu
  * one complete restore of the activity.
  */
 class restore_profileupdate_activity_task extends restore_activity_task {
-
     /**
      * No particular settings for this activity.
      */
