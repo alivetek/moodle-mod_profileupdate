@@ -22,8 +22,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Execute the profileupdate upgrade steps from the given old version.
  *
@@ -36,7 +34,6 @@ function xmldb_profileupdate_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2026071302) {
-
         // Define table profileupdate_fields to be created.
         $table = new xmldb_table('profileupdate_fields');
 

@@ -27,7 +27,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  */
 #[CoversClass(\mod_profileupdate_edit_form::class)]
 final class edit_form_test extends \advanced_testcase {
-
     /**
      * Load the form definition before each test.
      */

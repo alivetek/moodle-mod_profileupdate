@@ -27,7 +27,6 @@
  * Define the complete profileupdate structure for backup, with file annotations.
  */
 class backup_profileupdate_activity_structure_step extends backup_activity_structure_step {
-
     /**
      * Define the structure to back up, sourced from the profileupdate and profileupdate_fields tables.
      *

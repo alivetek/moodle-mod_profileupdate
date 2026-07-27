@@ -3,7 +3,7 @@
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_profileupdate';
-$plugin->version   = 2026072702;
+$plugin->version   = 2026072703;
 $plugin->requires  = 2025100600;
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.2.3';
+$plugin->release   = '0.2.4';

@@ -37,7 +37,6 @@ use PHPUnit\Framework\Attributes\CoversFunction;
 #[CoversFunction('profileupdate_get_selected_fields')]
 #[CoversFunction('profileupdate_save_selected_fields')]
 final class lib_test extends \advanced_testcase {
-
     /**
      * A course used by the tests.
      *
@@ -153,8 +152,10 @@ final class lib_test extends \advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $completion = new \completion_info($course);
 
-        // "Condition: Activity completion" in the course completion settings offers
-        // every activity with completion tracking enabled.
+        /*
+         * "Condition: Activity completion" in the course completion settings offers
+         * every activity with completion tracking enabled.
+         */
         $this->assertArrayHasKey($cm->id, $completion->get_activities());
 
         $cminfo = get_fast_modinfo($course, $student->id)->get_cm($cm->id);

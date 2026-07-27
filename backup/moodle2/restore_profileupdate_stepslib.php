@@ -27,7 +27,6 @@
  * Structure step to restore one profileupdate activity.
  */
 class restore_profileupdate_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Define the paths to restore, mirroring the backup structure.
      *

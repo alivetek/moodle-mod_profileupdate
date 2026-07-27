@@ -31,7 +31,6 @@ require_once($CFG->dirroot . '/mod/profileupdate/lib.php');
  * Module instance settings form.
  */
 class mod_profileupdate_mod_form extends moodleform_mod {
-
     /**
      * Defines forms elements.
      */

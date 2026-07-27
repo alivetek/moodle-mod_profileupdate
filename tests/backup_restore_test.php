@@ -33,7 +33,6 @@ use stdClass;
 #[CoversClass(\backup_profileupdate_activity_structure_step::class)]
 #[CoversClass(\restore_profileupdate_activity_structure_step::class)]
 final class backup_restore_test extends \advanced_testcase {
-
     /**
      * Load the backup/restore libraries before each test.
      */

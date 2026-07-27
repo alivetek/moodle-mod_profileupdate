@@ -24,13 +24,10 @@
 
 namespace mod_profileupdate\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_profileupdate module does not store any personal data of its own.
  */
 class provider implements \core_privacy\local\metadata\null_provider {
-
     /**
      * Get the language string identifier explaining why this plugin stores no data.
      *

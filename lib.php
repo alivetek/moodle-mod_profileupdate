@@ -22,8 +22,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Return whether the plugin supports the given feature.
  *
@@ -129,7 +127,10 @@ function profileupdate_delete_instance($id) {
 function profileupdate_view($moduleinstance, $course, $cm, $context) {
     global $CFG;
 
-    // completionlib.php is not loaded on every request, so make sure it is here.
+    /*
+     * The activity completion library of functions `completionlib.php` is not
+     * loaded on every request, so make sure it is here.
+     */
     require_once($CFG->libdir . '/completionlib.php');
 
     $event = \mod_profileupdate\event\course_module_viewed::create([
