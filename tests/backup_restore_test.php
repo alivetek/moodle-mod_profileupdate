@@ -37,6 +37,8 @@ final class backup_restore_test extends \advanced_testcase {
      * Load the backup/restore libraries before each test.
      */
     public static function setUpBeforeClass(): void {
+        parent::setUpBeforeClass();
+
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
