@@ -22,8 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Locate Moodle's config.php using the standard relative path.
-require('../../config.php');
+// Locate Moodle's config.php using the Moodle public/ webroot layout.
+require(__DIR__ . '/../../../config.php');
 require_once(__DIR__ . '/lib.php');
 
 // Course module id.
