@@ -63,18 +63,38 @@ jobs:
           - php: '8.2'
             moodle-branch: 'MOODLE_501_STABLE'
             database: 'pgsql'
+            dbhost: '127.0.0.1'
+            dbport: '5432'
+            dbuser: 'postgres'
+            dbpass: ''
           - php: '8.3'
             moodle-branch: 'MOODLE_501_STABLE'
             database: 'mariadb'
+            dbhost: '127.0.0.1'
+            dbport: '3306'
+            dbuser: 'root'
+            dbpass: ''
           - php: '8.3'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'pgsql'
+            dbhost: '127.0.0.1'
+            dbport: '5432'
+            dbuser: 'postgres'
+            dbpass: ''
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'pgsql'
+            dbhost: '127.0.0.1'
+            dbport: '5432'
+            dbuser: 'postgres'
+            dbpass: ''
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'mariadb'
+            dbhost: '127.0.0.1'
+            dbport: '3306'
+            dbuser: 'root'
+            dbpass: ''
 
     name: PHP ${{ matrix.php }} / ${{ matrix.moodle-branch }} / ${{ matrix.database }}
 
@@ -101,7 +121,13 @@ jobs:
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
       - name: Install Moodle
-        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        run: >
+          moodle-plugin-ci install
+          --plugin ./plugin
+          --db-host=${{ matrix.dbhost }}
+          --db-port=${{ matrix.dbport }}
+          --db-user=${{ matrix.dbuser }}
+          --db-pass=${{ matrix.dbpass }}
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
