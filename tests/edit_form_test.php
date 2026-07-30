@@ -181,6 +181,6 @@ final class edit_form_test extends \advanced_testcase {
         $this->assertStringContainsString('name="cmid"', $html);
 
         // Assert expected cmid value is preserved.
-        $this->assertStringContainsString('value="' . $cm->id . '"', $html);
+        $this->assertStringContainsString('value="' . $cmid . '"', $html);
     }
 }
