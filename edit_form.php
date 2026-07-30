@@ -57,8 +57,14 @@ class mod_profileupdate_edit_form extends moodleform {
             }
         }
 
-        $mform->addElement('hidden', 'id', $this->_customdata['cmid']);
-        $mform->setType('id', PARAM_INT);
+        // Named "cmid", not "id": set_user_data() below calls set_data() with a
+        // clone of $USER, and moodleform::set_data() overwrites any form element
+        // by matching its name against a property of the same name on the object.
+        // $USER->id is the logged-in user's database id, so a hidden field named
+        // "id" would silently be clobbered with that value instead of the course
+        // module id, corrupting the id submitted back to view.php.
+        $mform->addElement('hidden', 'cmid', $this->_customdata['cmid']);
+        $mform->setType('cmid', PARAM_INT);
 
         $this->add_action_buttons();
     }

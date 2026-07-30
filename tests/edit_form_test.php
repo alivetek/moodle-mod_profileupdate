@@ -41,12 +41,13 @@ final class edit_form_test extends \advanced_testcase {
      * Build a form instance for the given field selection.
      *
      * @param array $fields Selected fields as returned by profileupdate_get_selected_fields().
+     * @param int $cmid Course module id to carry in the form's hidden field.
      * @return \mod_profileupdate_edit_form
      */
-    protected function make_form(array $fields): \mod_profileupdate_edit_form {
+    protected function make_form(array $fields, int $cmid = 0): \mod_profileupdate_edit_form {
         return new \mod_profileupdate_edit_form(null, [
             'fields' => $fields,
-            'cmid' => 0,
+            'cmid' => $cmid,
         ]);
     }
 
@@ -147,5 +148,41 @@ final class edit_form_test extends \advanced_testcase {
 
         $profile = profile_user_record($user->id);
         $this->assertSame('Blue', $profile->favcolour);
+    }
+
+    /**
+     * Loading the current user's data must not clobber the course module id.
+     *
+     * set_user_data() populates the form defaults from a clone of $USER, and
+     * moodleform::set_data() overwrites any element whose name matches a
+     * property on that object. $USER has its own "id" property (the user's
+     * database id), so the hidden field carrying the course module id must not
+     * be named "id" or it silently gets replaced with the logged-in user's id.
+     */
+    public function test_set_user_data_does_not_clobber_course_module_id(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $user = $this->getDataGenerator()->create_user(['city' => 'Oldtown']);
+        $this->setUser($user);
+
+        // Distinct from the user id so a collision would be caught either way.
+        $cmid = $user->id + 1000;
+
+        $fields = [
+            ['type' => 'standard', 'name' => 'city', 'label' => 'City/town'],
+        ];
+        $form = $this->make_form($fields, $cmid);
+        $form->set_user_data($user);
+
+        $html = $form->render();
+        $this->assertMatchesRegularExpression(
+            '/name="cmid" value="' . $cmid . '"/',
+            $html
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/name="cmid" value="' . $user->id . '"/',
+            $html
+        );
     }
 }
