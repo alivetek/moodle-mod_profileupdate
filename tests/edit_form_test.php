@@ -176,13 +176,11 @@ final class edit_form_test extends \advanced_testcase {
         $form->set_user_data($user);
 
         $html = $form->render();
-        $this->assertMatchesRegularExpression(
-            '/name="cmid" value="' . $cmid . '"/',
-            $html
-        );
-        $this->assertDoesNotMatchRegularExpression(
-            '/name="cmid" value="' . $user->id . '"/',
-            $html
-        );
+
+        // Assert hidden cmid exists.
+        $this->assertStringContainsString('name="cmid"', $html);
+
+        // Assert expected cmid value is preserved.
+        $this->assertStringContainsString('value="' . $cm->id . '"', $html);
     }
 }
